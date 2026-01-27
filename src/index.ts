@@ -12,6 +12,7 @@ import { FileCommandProcessor } from './file-commands.js';
 import { ChatHistoryManager, ChatSession } from './chat-history.js';
 import { ErrorRecoveryManager } from './error-recovery.js';
 import { OfflineIntegration } from './offline-integration.js';
+import { ProgrammingKnowledge } from './programming-knowledge.js';
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,7 @@ interface SessionState {
   historyManager: ChatHistoryManager;
   errorRecovery: ErrorRecoveryManager;
   offlineIntegration?: OfflineIntegration;
+  programmingKnowledge: ProgrammingKnowledge;
   learningRecordIds: string[];
 }
 
@@ -123,6 +125,7 @@ async function main(): Promise<void> {
               process.exit(1);
             }
             
+            const programmingKnowledge = new ProgrammingKnowledge();
             await startChatSession(
               {
                 account: recoveredAccount,
@@ -130,6 +133,7 @@ async function main(): Promise<void> {
                 agent: agentFactory.createAgent(recoveredAccount, config.apiKey) as AgentInstance,
                 historyManager,
                 errorRecovery,
+                programmingKnowledge,
                 offlineIntegration,
                 learningRecordIds: [],
               },

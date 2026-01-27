@@ -1,5 +1,6 @@
 // src/code-generator.ts
 import { Logger } from './logger.js';
+import { ProgrammingKnowledge } from './programming-knowledge.js';
 
 export interface CodeTemplate {
   name: string;
@@ -15,11 +16,14 @@ export interface GeneratedCode {
   fileName: string;
   description: string;
   generatedAt: number;
+  bestPractices?: string[];
+  recommendations?: string[];
 }
 
 export class CodeGenerator {
   private logger: Logger;
   private codeTemplates: Map<string, CodeTemplate[]> = new Map();
+  private programmingKnowledge: ProgrammingKnowledge;
 
   // Supported languages
   private readonly SUPPORTED_LANGUAGES = [
@@ -45,6 +49,7 @@ export class CodeGenerator {
 
   constructor(logLevel: string = 'info') {
     this.logger = new Logger(logLevel);
+    this.programmingKnowledge = new ProgrammingKnowledge(logLevel);
     this.initializeTemplates();
   }
 
@@ -298,7 +303,8 @@ echo "Script completed successfully"`,
     templateType: string,
     templateName: string,
     language: string,
-    parameters: Record<string, string>
+    parameters: Record<string, string>,
+    context?: string
   ): GeneratedCode {
     const templates = this.codeTemplates.get(templateType) || [];
     const template = templates.find((t) => t.name === templateName && t.language === language);
@@ -316,12 +322,21 @@ echo "Script completed successfully"`,
 
     const fileName = this.generateFileName(templateType, language, parameters);
 
+    // Get language guide for best practices and recommendations
+    const guide = this.programmingKnowledge.getLanguageGuide(language);
+    const bestPractices = guide?.bestPractices.slice(0, 3) || [];
+    const recommendations = context
+      ? this.programmingKnowledge.getRecommendations(context, language)
+      : [];
+
     return {
       code,
       language,
       fileName,
       description: template.description || '',
       generatedAt: Date.now(),
+      bestPractices,
+      recommendations,
     };
   }
 
