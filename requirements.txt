@@ -1,0 +1,15 @@
+# Python requirements for main.py
+# Note: main.py uses only Python standard library (os, sys, platform, subprocess, pathlib)
+# NO additional Python packages required!
+
+# This file is kept for reference and future extensibility
+# main.py requires Python 3.6+ with NO external dependencies
+
+# All Python libraries used are built-in:
+# - os (file operations)
+# - sys (exit codes)
+# - platform (OS detection)
+# - subprocess (command execution)
+# - pathlib (cross-platform path handling)
+# - json (configuration files)
+# - shutil (file operations)

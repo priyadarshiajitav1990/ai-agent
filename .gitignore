@@ -1,6 +1,6 @@
 .env
 .env.local
-node_modules/
+# node_modules bundled - not ignored (pre-installed)
 dist/
 *.log
 .DS_Store
