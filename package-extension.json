@@ -1,0 +1,238 @@
+{
+  "name": "ai-agent-assistant",
+  "displayName": "AI Agent Assistant",
+  "description": "Intelligent AI Agent with offline support, error auto-fixing, and workspace intelligence",
+  "version": "1.0.0",
+  "publisher": "aiagent",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "AI",
+    "Programming Languages",
+    "Code Generators",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "assistant",
+    "error-fixing",
+    "offline",
+    "workspace",
+    "code-generation"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:ai-agent.activate",
+    "onCommand:ai-agent.chat",
+    "onCommand:ai-agent.fixError",
+    "onCommand:ai-agent.analyzeCode",
+    "onCommand:ai-agent.generateCode"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "ai-agent.activate",
+        "title": "AI Agent: Activate",
+        "description": "Activate the AI Agent extension"
+      },
+      {
+        "command": "ai-agent.chat",
+        "title": "AI Agent: Open Chat",
+        "description": "Open the AI Agent chat interface"
+      },
+      {
+        "command": "ai-agent.fixError",
+        "title": "AI Agent: Fix Error",
+        "description": "Let AI Agent automatically fix the current error"
+      },
+      {
+        "command": "ai-agent.analyzeCode",
+        "title": "AI Agent: Analyze Code",
+        "description": "Analyze the selected code with AI"
+      },
+      {
+        "command": "ai-agent.generateCode",
+        "title": "AI Agent: Generate Code",
+        "description": "Generate code based on description"
+      },
+      {
+        "command": "ai-agent.debugMode",
+        "title": "AI Agent: Toggle Debug Mode",
+        "description": "Enable/disable debug mode for error detection"
+      },
+      {
+        "command": "ai-agent.showConsole",
+        "title": "AI Agent: Show Console",
+        "description": "Show the AI Agent console"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "ai-agent.chat",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "ai-agent.fixError",
+        "key": "ctrl+shift+f",
+        "mac": "cmd+shift+f",
+        "when": "editorTextFocus"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "ai-agent.analyzeCode",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "ai-agent.generateCode",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "ai-agent.fixError",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "ai-agent.activate"
+        },
+        {
+          "command": "ai-agent.chat"
+        },
+        {
+          "command": "ai-agent.fixError"
+        },
+        {
+          "command": "ai-agent.analyzeCode"
+        },
+        {
+          "command": "ai-agent.generateCode"
+        },
+        {
+          "command": "ai-agent.debugMode"
+        },
+        {
+          "command": "ai-agent.showConsole"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ai-agent-sidebar",
+          "title": "AI Agent",
+          "icon": "resources/ai-agent-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "ai-agent-sidebar": [
+        {
+          "id": "ai-agent.welcome",
+          "name": "Welcome",
+          "when": "config.ai-agent.showWelcome"
+        },
+        {
+          "id": "ai-agent.chat",
+          "name": "Chat",
+          "type": "webview"
+        },
+        {
+          "id": "ai-agent.console",
+          "name": "Console",
+          "type": "webview"
+        },
+        {
+          "id": "ai-agent.errors",
+          "name": "Errors",
+          "type": "webview"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "AI Agent",
+      "properties": {
+        "ai-agent.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your AI API key",
+          "markdownDescription": "Your AI API key (keep this secret)"
+        },
+        "ai-agent.provider": {
+          "type": "string",
+          "default": "gemini",
+          "enum": [
+            "gemini",
+            "openai",
+            "azure",
+            "github"
+          ],
+          "markdownDescription": "Choose your AI provider (Gemini, OpenAI, Azure, or GitHub Copilot)"
+        },
+        "ai-agent.offline": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable offline mode (use local LLM when available)"
+        },
+        "ai-agent.autoFixErrors": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically fix detected errors"
+        },
+        "ai-agent.errorDetection": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time error detection"
+        },
+        "ai-agent.maxRetries": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Maximum number of retry attempts for auto-fix"
+        },
+        "ai-agent.showWelcome": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show welcome view on activation"
+        },
+        "ai-agent.debugMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug logging"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.3.0",
+    "@octokit/rest": "^19.0.13",
+    "dotenv": "^16.0.0",
+    "googleapis": "^118.0.0",
+    "inquirer": "^8.2.5",
+    "openai": "^4.0.0",
+    "simple-oauth2": "^5.0.0"
+  }
+}

@@ -4,6 +4,7 @@ import { promisify } from 'util';
 import * as os from 'os';
 import * as path from 'path';
 import { Logger } from './logger.js';
+import { Measure, Retry, PerformanceMonitor, TTLCache } from './tools-utils.js';
 
 const execAsync = promisify(exec);
 
@@ -72,8 +73,13 @@ export class CommandExecutor {
     'docker',
   ];
 
+  private performanceMonitor: PerformanceMonitor;
+  private commandCache: TTLCache<string, CommandResult>;
+
   constructor(logLevel: string = 'info', safetyConfig?: SafetyConfig) {
     this.logger = new Logger(logLevel);
+    this.performanceMonitor = new PerformanceMonitor(this.logger);
+    this.commandCache = new TTLCache(5000, this.logger); // 5 second TTL for cached results
     this.safetyConfig = {
       blockedCommands: this.DANGEROUS_COMMANDS,
       timeoutMs: 30000,
@@ -84,12 +90,21 @@ export class CommandExecutor {
   }
 
   /**
-   * Execute shell command safely
+   * Execute shell command safely with automatic retries and monitoring
    */
+  @Measure()
+  @Retry(2, 100)
   async executeCommand(command: string, options?: CommandExecutionOptions): Promise<CommandResult> {
     const startTime = Date.now();
 
     try {
+      // Check cache first
+      const cached = this.commandCache.get(command);
+      if (cached) {
+        this.logger.debug(`Command served from cache: ${command}`);
+        return cached;
+      }
+
       // Safety checks
       this.validateCommand(command);
 
@@ -106,6 +121,7 @@ export class CommandExecutor {
       });
 
       const duration = Date.now() - startTime;
+      this.performanceMonitor.recordMetric('executeCommand', duration);
       const commandResult: CommandResult = {
         command,
         exitCode: 0,
@@ -117,6 +133,7 @@ export class CommandExecutor {
       };
 
       this.recordCommand(commandResult);
+      this.commandCache.set(command, commandResult); // Cache successful results
       return commandResult;
     } catch (error: any) {
       const duration = Date.now() - startTime;

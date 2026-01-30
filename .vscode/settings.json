@@ -1,0 +1,44 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+    "search.exclude": {
+      "node_modules": true,
+      "dist": true,
+      ".git": true
+    },
+    "files.watcherExclude": {
+      "**/.git/objects/**": true,
+      "**/node_modules/*/**": true,
+      "**/.DS_Store": true
+    },
+    "ai-agent.offline": true,
+    "ai-agent.errorDetection": true,
+    "ai-agent.autoFixErrors": true,
+    "ai-agent.maxRetries": 3,
+    "ai-agent.debugMode": false
+  },
+  "extensions": {
+    "recommendations": [
+      "ai-agent.ai-agent-assistant",
+      "esbenp.prettier-vscode",
+      "ms-eslint.eslint",
+      "ms-python.python",
+      "ms-vscode.makefile-tools"
+    ]
+  },
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "python-envs.pythonProjects": []
+}
